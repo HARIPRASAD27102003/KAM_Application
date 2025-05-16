@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% load custom_filters %}
+{% load static %}
+{% block title %}Orders{% endblock %}
+{% block content %}
+<div class="container mt-4">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/styles.css' %}">
+    <h2 class="mb-4">Orders</h2>
+    <div class="row">
+        {% for order in orders %}
+        <div class="col-md-6 mb-4">
+            <a href="{% url 'order_details' order_id=order.order_id %}"><div class="card">
+                <div class="card-header">
+                    <strong>Order ID:</strong> {{ order.order_id }}
+                </div>
+                <div class="card-body">
+                    <p><strong>Order Details:</strong> {{ order.order_details }}</p>
+                    <p><strong>Status:</strong> <span class="badge badge-info">{{ order.status }}</span></p>
+                    <p><strong>Order Date:</strong> {{ order.date_time|convert_timezone:order.restaurant.kam.timezone  }}</p>
+                </div>
+                <div class="card-footer text-right">
+                    {% comment %} <a href="{% url 'edit_order' order_id=order.order_id %}" class="btn btn-sm btn-primary">Edit</a>
+                    <a href="{% url 'delete_order' order_id=order.order_id %}" class="btn btn-sm btn-danger">Delete</a> {% endcomment %}
+                </div>
+            </a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% load custom_filters %}
+{% load static %}
+{% block title %}Interactions{% endblock %}
+{% block content %}
+<div class="container mt-4">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/styles.css' %}">
+    <h2 class="mb-4">Interactions</h2>
+    <div class="row">
+        {% for interaction in interactions %}
+        <div class="col-md-6 mb-4">
+            <a href="{% url 'interaction_detail' interaction_id=interaction.id %}">
+            <div class="card">
+                <div class="card-header">
+                    <strong>Interaction ID:</strong> {{ interaction.id }}
+                </div>
+                <div class="card-body">
+                    <p><strong>Date:</strong> {{ interaction.date_time|convert_timezone:interaction.kam.timezone }}</p>
+                    <p><strong>Interaction Type:</strong> {{ interaction.interaction_type }}</p>
+                    {% if interaction.is_order_related %}
+                    <p><strong>Order ID:</strong> {{ interaction.order.order_id }}</p>
+                    {% endif %}
+                    <p><strong>Notes:</strong> {{ interaction.notes }}</p>
+                </div>
+                <div class="card-footer text-right">
+                </div>
+            </div>
+        </a>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

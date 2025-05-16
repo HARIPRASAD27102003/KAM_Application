@@ -1,0 +1,86 @@
+
+    /* General container spacing */
+    .container {
+        background-color: #f9f9f9; /* Light background for better readability */
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+    }
+    
+    /* Card styling */
+    .card {
+        border: 1px solid #ddd; /* Light border for separation */
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05); /* Subtle shadow for a clean look */
+        transition: transform 0.2s ease, box-shadow 0.2s ease; /* Animation on hover */
+    }
+    
+    .card:hover {
+        transform: scale(1.02); /* Slight zoom effect on hover */
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15); /* Stronger shadow on hover */
+    }
+    
+    /* Card header */
+    .card-header {
+        background-color: #007bff; /* Primary color background */
+        color: #fff; /* White text for contrast */
+        padding: 10px;
+        font-weight: bold;
+        border-bottom: 1px solid #0056b3; /* Subtle border for separation */
+    }
+    
+    /* Card body */
+    .card-body {
+        padding: 15px;
+        font-size: 0.95rem; /* Adjust font size for readability */
+        color: #333; /* Neutral text color */
+    }
+    
+    /* Badge styling */
+    .badge-info {
+        background-color: #17a2b8; /* Informative color */
+        color: #fff;
+        font-size: 0.85rem;
+        padding: 5px 10px;
+        border-radius: 12px;
+    }
+    
+    /* Card footer */
+    .card-footer {
+        background-color: #f8f9fa; /* Light footer background */
+        padding: 10px;
+        border-top: 1px solid #ddd;
+    }
+    
+    /* Buttons */
+    .btn-sm {
+        padding: 5px 10px;
+        font-size: 0.8rem;
+        border-radius: 4px;
+    }
+    
+    .btn-primary {
+        background-color: #007bff;
+        border: none;
+    }
+    
+    .btn-primary:hover {
+        background-color: #0056b3; /* Darker shade on hover */
+    }
+    
+    .btn-danger {
+        background-color: #dc3545;
+        border: none;
+    }
+    
+    .btn-danger:hover {
+        background-color: #a71d2a; /* Darker shade on hover */
+    }
+    
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+        .card {
+            margin-bottom: 20px; /* Additional spacing for smaller screens */
+        }
+    }
+    

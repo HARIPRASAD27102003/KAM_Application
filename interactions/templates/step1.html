@@ -1,0 +1,316 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<form method="POST" action="{% url 'add_interaction' restaurant_name=restaurant.name %}">
+  {% csrf_token %}
+
+  <!-- Interaction Type Selection -->
+  <label for="interaction_type">Select Interaction Type:</label>
+  <select name="interaction_type" id="interaction_type" required onchange="toggleNextInteractionField()">
+      <option value="call">Call</option>
+      <option value="meeting">Meeting</option>
+      <option value="email">Email</option>
+  </select>
+  <br>
+  
+  <!-- Interaction Related to Order -->
+  <label>Is this interaction related to any order?</label>
+  <input type="radio" id="related_yes" name="related_to_order" value="yes" onclick="toggleRelatedOrderFields(); toggleNextInteractionField()"> Yes
+  <input type="radio" id="related_no" name="related_to_order" value="no" onclick="toggleRelatedOrderFields(); toggleNextInteractionField()" checked> No
+  <br>
+
+  <!-- Order Option (Existing or New) -->
+  <div id="order_options" style="display:none;">
+    <label>Select Order Type:</label>
+    <input type="radio" id="existing_order" name="order_option" value="existing_order" onclick="toggleOrderFields()" checked> Existing Order
+    <input type="radio" id="new_order" name="order_option" value="new_order" onclick="toggleOrderFields()"> New Order
+    <br>
+  
+    <!-- Existing Order Fields (Dropdown) -->
+    <div id="existing_order_fields" style="display:none;">
+      {% if orders %}
+          <label for="order_id">Select Order:</label>
+          <select id="order_id" name="order_id" required>
+              {% for order in orders %}
+                  <option value="{{ order.order_id }}">{{ order.order_id }}</option>
+              {% endfor %}
+          </select>
+      {% else %}
+          <p>No Pending orders available.</p>
+      {% endif %}
+      <br>
+
+      <label for="order_status">Order Status:</label>
+      <select id="order_status" name="order_status" required>
+          <option value="Pending">Pending</option>
+          <option value="Success">Success</option>
+          <option value="Cancelled">Cancelled</option>
+      </select>
+      <br>
+      
+      <label for="order_details">Order Details:</label>
+      <input type="text" id="order_details1" name="order_details" placeholder="Update order details">
+      <br>
+    </div>
+  
+    <!-- New Order Fields -->
+    <div id="new_order_fields" style="display:none;">
+        <label for="order_details">Order Details:</label>
+        <textarea id="order_details" name="order_details2" placeholder="Enter new order details"></textarea>
+        <!-- Disclaimer -->
+        <small class="new-order-disclaimer">* A follow-up call related to this order will be scheduled for the next day.</small>
+        <br>
+    </div>
+  </div>
+
+  <!-- Next Interaction Field -->
+  <div id="next_interaction_field" style="display:none;">
+    <label for="next_interaction_days">Next Interaction (in days):</label>
+    <input type="number" id="next_interaction_days" name="next_interaction_days" min="1" placeholder="Enter days for next interaction">
+  </div>
+  
+  <!-- Contact (KAM) Selection -->
+  <label for="contact">Select Contact:</label>
+  <select name="contact" id="contact" required>
+      {% for contact in contacts %}
+          <option value="{{ contact.name }}">{{ contact.name }}</option>
+      {% endfor %}
+  </select>
+  <br>
+  
+  <!-- Notes Section -->
+  <label for="notes">Notes:</label>
+  <textarea id="notes" name="notes" placeholder="Enter any notes"></textarea>
+  <br>
+  
+  <button type="submit" class="btn btn-primary btn-sm">Submit</button>
+</form>
+
+<script>
+    function toggleOrderFields() {
+        var existingOrderFields = document.getElementById('existing_order_fields');
+        var newOrderFields = document.getElementById('new_order_fields');
+        var orderIdField = document.getElementById('order_id');
+        var orderDetailsField1 = document.getElementById('order_details1');
+        var orderDetailsField2 = document.getElementById('order_details');
+
+        if (document.getElementById('existing_order').checked) {
+            existingOrderFields.style.display = 'block';
+            newOrderFields.style.display = 'none';
+
+            // Ensure required attributes for existing order
+            orderIdField.required = true;
+            orderDetailsField1.required = false; // Optional for existing order
+            orderDetailsField2.required = false;
+        } else if (document.getElementById('new_order').checked) {
+            existingOrderFields.style.display = 'none';
+            newOrderFields.style.display = 'block';
+
+            // Ensure required attributes for new order
+            orderIdField.required = false;
+            orderDetailsField1.required = false;
+            orderDetailsField2.required = true;
+        }
+    }
+
+    function toggleRelatedOrderFields() {
+        var orderOptions = document.getElementById('order_options');
+        if (document.getElementById('related_yes').checked) {
+            orderOptions.style.display = 'block';
+        } else {
+            orderOptions.style.display = 'none';
+        }
+    }
+
+    function toggleNextInteractionField() {
+        var interactionType = document.getElementById('interaction_type').value;
+        var relatedToOrder = document.querySelector('input[name="related_to_order"]:checked').value;
+        var nextInteractionField = document.getElementById('next_interaction_field');
+        
+        // If interaction is related to an order, show the next interaction field
+        if (relatedToOrder === 'yes' && interactionType === 'call') {
+            nextInteractionField.style.display = 'block';
+        } else {
+            nextInteractionField.style.display = 'none';
+        }
+    }
+</script>
+
+{% comment %} {% endblock %} {% endcomment %}
+
+<style>
+    /* General Page Styling */
+    /* Modern Form Styling */
+    body {
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        background: linear-gradient(135deg, #f5f7fa 0%, #e4e8eb 100%);
+        color: #2d3748;
+        margin: 0;
+        padding: 40px 20px;
+        min-height: 100vh;
+    }
+    
+    form {
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+        padding: 32px;
+        max-width: 650px;
+        margin: auto;
+        transition: transform 0.2s ease;
+    }
+    
+    form:hover {
+        transform: translateY(-2px);
+    }
+    
+    /* Input Fields Styling */
+    label {
+        display: block;
+        font-weight: 600;
+        margin-bottom: 8px;
+        color: #4a5568;
+        font-size: 0.95rem;
+        letter-spacing: 0.01em;
+    }
+    
+    input, select, textarea {
+        width: 100%;
+        padding: 12px;
+        margin-bottom: 20px;
+        border: 2px solid #e2e8f0;
+        border-radius: 8px;
+        font-size: 0.95rem;
+        transition: all 0.2s ease;
+        background-color: #f8fafc;
+        box-sizing: border-box;
+    }
+    
+    input:focus, select:focus, textarea:focus {
+        outline: none;
+        border-color: #4299e1;
+        box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.15);
+        background-color: white;
+    }
+    
+    textarea {
+        resize: vertical;
+        min-height: 120px;
+    }
+    
+    /* Radio Buttons Styling */
+    input[type="radio"] {
+        width: auto;
+        margin-right: 8px;
+        margin-bottom: 0;
+    }
+    
+    /* Order Fields Containers */
+    #existing_order_fields, #new_order_fields {
+        background: #f8fafc;
+        border-radius: 12px;
+        padding: 24px;
+        margin-bottom: 24px;
+        border: none;
+        transition: all 0.2s ease;
+    }
+    
+    #existing_order_fields {
+        border-left: 4px solid #4299e1;
+    }
+    
+    #new_order_fields {
+        border-left: 4px solid #48bb78;
+    }
+    
+    /* Submit Button */
+    button {
+        background: linear-gradient(135deg, #4299e1 0%, #3182ce 100%);
+        color: white;
+        border: none;
+        padding: 14px 28px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 600;
+        font-size: 1rem;
+        transition: all 0.2s ease;
+        width: auto;
+        display: inline-block;
+    }
+    
+    button:hover {
+        background: linear-gradient(135deg, #3182ce 0%, #2c5282 100%);
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(66, 153, 225, 0.25);
+    }
+    
+    button:active {
+        transform: translateY(0);
+    }
+    
+    /* Notes Section */
+    #notes {
+        background-color: white;
+        border: 2px solid #e2e8f0;
+    }
+    
+    /* Section Headers */
+    .section-header {
+        font-size: 1.1rem;
+        color: #2d3748;
+        margin-bottom: 16px;
+        padding-bottom: 8px;
+        border-bottom: 2px solid #e2e8f0;
+    }
+    
+    /* Error States */
+    input:invalid, select:invalid, textarea:invalid {
+        border-color: #fc8181;
+    }
+    
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        form {
+            padding: 24px;
+            margin: 16px;
+        }
+        
+        input, select, textarea {
+            font-size: 16px; /* Prevents zoom on mobile */
+        }
+        
+        button {
+            width: 100%;
+            padding: 16px;
+        }
+    }
+    
+    /* Loading State */
+    button.loading {
+        opacity: 0.8;
+        cursor: wait;
+    }
+    
+    /* Success Message */
+    .success-message {
+        background-color: #c6f6d5;
+        color: #2f855a;
+        padding: 16px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .new-order-disclaimer {
+        font-size: 0.9rem; /* Slightly smaller than regular text */
+        color:rgb(248, 3, 3); /* Gray color for subtlety */
+        margin-top: 5px; /* Space above the disclaimer */
+        display: block; /* Ensures it stays on a new line */
+        font-style: italic; /* Optional: Makes the text italic */
+    }
+</style>
+
+
+{% endblock %}

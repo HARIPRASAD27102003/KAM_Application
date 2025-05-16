@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+{% load custom_filters %}
+{% load static %}
+{% block title %}Order Details{% endblock %}
+{% block content %}
+<div class="container mt-4">
+    {% comment %} <link rel="stylesheet" type="text/css" href="{% static 'css/styles.css' %}"> {% endcomment %}
+    <h2 class="mb-4">Order Details</h2>
+    <div class="card mb-4">
+        <div class="card-header">
+            <strong>Order ID:</strong> {{ order.order_id }}
+        </div>
+        <div class="card-body">
+            <p><strong>Restaurant:</strong> {{ order.restaurant.name }}</p>
+            <p><strong>KAM:</strong> {{ order.restaurant.kam }}</p>
+            <p><strong>Notes:</strong> {{ order.order_details }}</p>
+            <p><strong>Status:</strong> <span class="badge badge-info">{{ order.status }}</span></p>
+            <p><strong>Latest Interaction Date and Time:</strong> {{ order.date_time|convert_timezone:order.restaurant.kam.timezone }}</p>
+        </div>
+    </div>
+    <h3 class="mb-4">Recent Interactions</h3>
+    <div class="row">
+        {% if interactions %}
+        {% for interaction in interactions %}
+        <div class="col-md-6 mb-4">
+            <a href="{% url 'interaction_detail' interaction_id=interaction.id %}">
+            <div class="card">
+                <div class="card-header">
+                    <strong>Interaction ID:</strong> {{ interaction.id }}
+                </div>
+                <div class="card-body">
+                    <p><strong>Date:</strong> {{ interaction.date_time|convert_timezone:interaction.kam.timezone }}</p>
+                    <p><strong>Interaction Type:</strong> {{ interaction.interaction_type }}</p>
+                    <p><strong>Notes:</strong> {{ interaction.notes }}</p>
+                </div>
+            </div>
+            </a>
+        </div>
+        {% endfor %}
+        {% else %}
+        <p>No recent interactions for this order.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

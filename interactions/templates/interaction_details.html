@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% block title %}Interaction Details{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Interaction Details</h2>
+    
+    <!-- Display interaction details -->
+    <div class="card">
+        <div class="card-header">
+            <strong>Interaction Type:</strong> {{ interaction.interaction_type }}
+        </div>
+        <div class="card-body">
+            <p><strong>Restaurant:</strong> {{ interaction.restaurant.name }}</p>
+            <p><strong>Contact:</strong> {{ interaction.contact.name }}</p>
+            <p><strong>KAM:</strong> {{ interaction.kam.name}}</p>
+            <p><strong>Date and Time:</strong> {{ interaction.date_time|date:"F j, Y, g:i a" }}</p>
+            <p><strong>Notes:</strong> {{ interaction.notes|default:"No notes available" }}</p>
+            <p><strong>Order Related:</strong> {% if interaction.is_order_related %} Yes {% else %} No {% endif %}</p>
+            {% if interaction.is_order_related %}
+                <p><strong>Order ID:</strong> <a href="{% url 'order_details' order_id=interaction.order.order_id %}">{{ interaction.order.order_id }}</a></p>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Display related interactions if available -->
+    {% if related_interactions %}
+    <h3 class="mt-4">Related Interactions</h3>
+    <ul class="list-group">
+        {% for related in related_interactions %}
+        <li class="list-group-item">
+            <a href="{% url 'interaction_detail' interaction_id=related.id %}">{{ related.interaction_type }} - {{ related.date_time|date:"F j, Y" }}</a>
+        </li>
+        {% empty %}
+        <li class="list-group-item">No related interactions</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+</div>
+{% endblock %}
